@@ -48,7 +48,7 @@ Pobranie wszystkich dokumentów z bazy poprzez DocumentDao. Metoda getAllDocumen
         3. Sprawdź, czy któryś z wniosków urlopowych zawiera niepoprawnie wprowadzony początek i koniec urlopu (tzn. daty w złej kolejności).
          */
 
-        // exercise3(applicationForHolidaysList);
+         exercise3(applicationForHolidaysList);
 
 
         /*
@@ -59,7 +59,6 @@ Pytanie: Jaki jest Twój ulubiony kolor?
     2. Zielony
     3. Niebieski
          */
-
 
 
     }
@@ -124,12 +123,12 @@ Pytanie: Jaki jest Twój ulubiony kolor?
         for (ApplicationForHolidays applicationForHolidays : applicationForHolidaysList) {
             sinceDate = applicationForHolidays.getSince();
             toDate = applicationForHolidays.getTo();
-            if (sinceDate.before(toDate)) {
-                System.out.println("porawne daty");
+            if(toDate.before(sinceDate)){
+                System.out.println("Niepoprawne daty");
                 System.out.println(sinceDate);
                 System.out.println(toDate);
-            } else {
-                System.out.println("Niepoprawne daty");
+            }else{
+                System.out.println("porawne daty");
                 System.out.println(sinceDate);
                 System.out.println(toDate);
             }
