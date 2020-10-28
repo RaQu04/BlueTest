@@ -1,7 +1,14 @@
-import pl.blueenergy.document.*;
+import pl.blueenergy.document.ApplicationForHolidays;
+import pl.blueenergy.document.Document;
+import pl.blueenergy.document.DocumentDao;
+import pl.blueenergy.document.Questionnaire;
 import pl.blueenergy.organization.User;
 
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,19 +43,19 @@ Pobranie wszystkich dokumentów z bazy poprzez DocumentDao. Metoda getAllDocumen
 			wszystkich kwestionariuszach w systemie.
 		 */
 
-        //  exercise1(questionnairesList);
+//        exercise1(questionnairesList);
 
         /*
         2. Stwórz listę wszystkich użytkowników, którzy złożyli wniosek o urlop, a następnie sprawdź czy któryś z nich w loginie zawiera polskie znaki, które mogłyby spowodować błędy w niektórych mechanizmach.
          */
 
-        //  exercise2(applicationForHolidaysList);
+//        exercise2(applicationForHolidaysList);
 
         /*
         3. Sprawdź, czy któryś z wniosków urlopowych zawiera niepoprawnie wprowadzony początek i koniec urlopu (tzn. daty w złej kolejności).
          */
 
-         exercise3(applicationForHolidaysList);
+//        exercise3(applicationForHolidaysList);
 
 
         /*
@@ -58,8 +65,21 @@ Pytanie: Jaki jest Twój ulubiony kolor?
     1. Żółty
     2. Zielony
     3. Niebieski
+
+    ****
+    Metoda zapisuje wynik do pliku exercise_4.txt
+    ****
          */
 
+
+//        exercise4(questionnairesList);
+
+        /*
+        5. Obiekt klasy User zawiera prywatne pole "salary" nie posiadające żadnych publicznych akcesorów. Używając refleksji zmień wartość powyższego pola dla dowolnego użytkownika wnioskującego o urlop.
+         */
+
+        User userWhoRequestAboutHolidays = applicationForHolidaysList.get(0).getUserWhoRequestAboutHolidays();
+//        userWhoRequestAboutHolidays.salary = 1000;
 
     }
 
@@ -123,15 +143,32 @@ Pytanie: Jaki jest Twój ulubiony kolor?
         for (ApplicationForHolidays applicationForHolidays : applicationForHolidaysList) {
             sinceDate = applicationForHolidays.getSince();
             toDate = applicationForHolidays.getTo();
-            if(toDate.before(sinceDate)){
+            if (toDate.before(sinceDate)) {
                 System.out.println("Niepoprawne daty");
                 System.out.println(sinceDate);
                 System.out.println(toDate);
-            }else{
+            } else {
                 System.out.println("porawne daty");
                 System.out.println(sinceDate);
                 System.out.println(toDate);
             }
+        }
+    }
+
+    private void exercise4(List<Questionnaire> questionnairesList) {
+        try (PrintWriter printWriter = new PrintWriter("exercise_4.txt")) {
+            for (Questionnaire questionnaire : questionnairesList) {
+                for (int i = 0; i < questionnaire.getQuestions().size(); i++) {
+                    printWriter.println("Pytanie: " + questionnaire.getQuestions().get(i).getQuestionText());
+
+                    for (int j = 0; j < questionnaire.getQuestions().get(i).getPossibleAnswers().size(); j++) {
+                        printWriter.println("\t" + (j + 1) + ". " + questionnaire.getQuestions().get(i).getPossibleAnswers().get(j));
+                    }
+                    printWriter.println("\n");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }
