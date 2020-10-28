@@ -43,19 +43,19 @@ Pobranie wszystkich dokumentów z bazy poprzez DocumentDao. Metoda getAllDocumen
 			wszystkich kwestionariuszach w systemie.
 		 */
 
-//        exercise1(questionnairesList);
+        exercise1(questionnairesList);
 
         /*
         2. Stwórz listę wszystkich użytkowników, którzy złożyli wniosek o urlop, a następnie sprawdź czy któryś z nich w loginie zawiera polskie znaki, które mogłyby spowodować błędy w niektórych mechanizmach.
          */
 
-//        exercise2(applicationForHolidaysList);
+        exercise2(applicationForHolidaysList);
 
         /*
         3. Sprawdź, czy któryś z wniosków urlopowych zawiera niepoprawnie wprowadzony początek i koniec urlopu (tzn. daty w złej kolejności).
          */
 
-//        exercise3(applicationForHolidaysList);
+        exercise3(applicationForHolidaysList);
 
 
         /*
@@ -72,14 +72,14 @@ Pytanie: Jaki jest Twój ulubiony kolor?
          */
 
 
-//        exercise4(questionnairesList);
+        exercise4(questionnairesList);
 
         /*
         5. Obiekt klasy User zawiera prywatne pole "salary" nie posiadające żadnych publicznych akcesorów. Używając refleksji zmień wartość powyższego pola dla dowolnego użytkownika wnioskującego o urlop.
          */
 
         User userWhoRequestAboutHolidays = applicationForHolidaysList.get(0).getUserWhoRequestAboutHolidays();
-//        userWhoRequestAboutHolidays.salary = 1000;
+
 
     }
 
@@ -104,8 +104,9 @@ Pytanie: Jaki jest Twój ulubiony kolor?
         // System.out.println(possibleAnswers.size());
 
         double answer = (possibleAnswers.size() / questionText.size());
-
+        System.out.println("***  Zadanie 1  ***");
         System.out.println("odpowiedz " + answer);
+        System.out.println("******************* \n");
     }
 
     private void exercise2(List<ApplicationForHolidays> applicationForHolidaysList) {
@@ -119,8 +120,7 @@ Pytanie: Jaki jest Twój ulubiony kolor?
             loginList.add(user.getLogin());
         }
 
-        System.out.println("***********************");
-
+        System.out.println("***  Zadanie 2  ***");
 
         String NAME_REGEX = "^((?![żźćńąśłęó]).)*$";
         Pattern compiledPattern = Pattern.compile(NAME_REGEX);
@@ -133,11 +133,16 @@ Pytanie: Jaki jest Twój ulubiony kolor?
                 System.out.println(login + " - UWAGA! - posiada polskie znaki");
             }
         }
+
+        System.out.println("******************* \n");
+
     }
 
     private void exercise3(List<ApplicationForHolidays> applicationForHolidaysList) {
         Date sinceDate;
         Date toDate;
+
+        System.out.println("***  Zadanie 3  ***");
 
 
         for (ApplicationForHolidays applicationForHolidays : applicationForHolidaysList) {
@@ -145,17 +150,23 @@ Pytanie: Jaki jest Twój ulubiony kolor?
             toDate = applicationForHolidays.getTo();
             if (toDate.before(sinceDate)) {
                 System.out.println("Niepoprawne daty");
-                System.out.println(sinceDate);
-                System.out.println(toDate);
+                System.out.println("\tSince: " + sinceDate);
+                System.out.println("\t  To:  " + toDate);
             } else {
                 System.out.println("porawne daty");
-                System.out.println(sinceDate);
-                System.out.println(toDate);
+                System.out.println("\tSince: " + sinceDate);
+                System.out.println("\t  To:  " + toDate);
             }
         }
+
+        System.out.println("******************* \n");
+
     }
 
     private void exercise4(List<Questionnaire> questionnairesList) {
+        System.out.println("***  Zadanie 4  ***");
+
+
         try (PrintWriter printWriter = new PrintWriter("exercise_4.txt")) {
             for (Questionnaire questionnaire : questionnairesList) {
                 for (int i = 0; i < questionnaire.getQuestions().size(); i++) {
@@ -170,5 +181,8 @@ Pytanie: Jaki jest Twój ulubiony kolor?
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        System.out.println("Zawartość w pliku exercixe_4.txt");
+        System.out.println("******************* \n");
+
     }
 }
