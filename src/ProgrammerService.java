@@ -1,41 +1,40 @@
-import pl.blueenergy.document.ApplicationForHolidays;
-import pl.blueenergy.document.Document;
-import pl.blueenergy.document.DocumentDao;
-import pl.blueenergy.document.Questionnaire;
+import pl.blueenergy.document.*;
+import pl.blueenergy.organization.Child;
 import pl.blueenergy.organization.User;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ProgrammerService {
 
-    public void execute(DocumentDao documentDao) {
+    public void execute(DocumentDao documentDao) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
         //Miejsce na twój kod:
 
-
         List<Document> allDocumentsInDatabase = documentDao.getAllDocumentsInDatabase();
-        List<Questionnaire> questionnairesList = new ArrayList<>();
-        List<ApplicationForHolidays> applicationForHolidaysList = new ArrayList<>();
+        new ArrayList<>();
 
             /*
 Pobranie wszystkich dokumentów z bazy poprzez DocumentDao. Metoda getAllDocumentsInDatabase zwraca wszystkie dokumenty w jednej liście, dlatego następnie musisz rozdzielić je na dwie osobne listy, po jednej dla każdego z typów dokumentów (ApplicationForHolidays i Questionnaire).
 */
 
-        for (Document document : allDocumentsInDatabase) {
-            if (document instanceof Questionnaire) {
-                questionnairesList.add((Questionnaire) document);
-            } else if (document instanceof ApplicationForHolidays) {
-                applicationForHolidaysList.add((ApplicationForHolidays) document);
-            }
-        }
-//        questionnairesList.forEach(System.out::println);
-//        System.out.println("*******");
-//        applicationForHolidaysList.forEach(System.out::println);
+        List<Questionnaire> questionnairesList = allDocumentsInDatabase.stream()
+                .filter(dok -> dok instanceof Questionnaire)
+                .map(dok -> (Questionnaire) dok)
+                .collect(Collectors.toList());
+
+        List<ApplicationForHolidays> applicationForHolidaysList = allDocumentsInDatabase.stream()
+                .filter(dok -> dok instanceof ApplicationForHolidays)
+                .map(dok -> (ApplicationForHolidays) dok)
+                .collect(Collectors.toList());
 
 
 		/*
@@ -71,37 +70,34 @@ Pytanie: Jaki jest Twój ulubiony kolor?
     ****
          */
 
-
         exercise4(questionnairesList);
 
         /*
         5. Obiekt klasy User zawiera prywatne pole "salary" nie posiadające żadnych publicznych akcesorów. Używając refleksji zmień wartość powyższego pola dla dowolnego użytkownika wnioskującego o urlop.
          */
 
-        User userWhoRequestAboutHolidays = applicationForHolidaysList.get(0).getUserWhoRequestAboutHolidays();
+
+        exercise5(applicationForHolidaysList);
 
 
     }
 
 
     private void exercise1(List<Questionnaire> questionnairesList) {
-        List<String> questionText = new ArrayList<>();
-        List<String> possibleAnswers = new ArrayList<>();
 
+        List<Question> collect = questionnairesList.stream()
+                .map(Questionnaire::getQuestions)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
-        for (Questionnaire questionnaire : questionnairesList) {
-            for (int i = 0; i < questionnaire.getQuestions().size(); i++) {
-                questionText.add(questionnaire.getQuestions().get(i).getQuestionText());
-            }
-        }
-        //System.out.println(questionText.size());
+        List<String> possibleAnswers = collect.stream()
+                .flatMap(c -> c.getPossibleAnswers().stream())
+                .collect(Collectors.toList());
 
-        for (Questionnaire questionnaire : questionnairesList) {
-            for (int i = 0; i < questionnaire.getQuestions().size(); i++) {
-                possibleAnswers.addAll(questionnaire.getQuestions().get(i).getPossibleAnswers());
-            }
-        }
-        // System.out.println(possibleAnswers.size());
+        List<String> questionText = collect.stream()
+                .map(Question::getQuestionText)
+                .collect(Collectors.toList());
+
 
         double answer = (possibleAnswers.size() / questionText.size());
         System.out.println("***  Zadanie 1  ***");
@@ -110,15 +106,13 @@ Pytanie: Jaki jest Twój ulubiony kolor?
     }
 
     private void exercise2(List<ApplicationForHolidays> applicationForHolidaysList) {
-        List<User> userList = new ArrayList<>();
-        List<String> loginList = new ArrayList<>();
-        for (ApplicationForHolidays user : applicationForHolidaysList) {
-            userList.add(user.getUserWhoRequestAboutHolidays());
-        }
 
-        for (User user : userList) {
-            loginList.add(user.getLogin());
-        }
+
+        List<String> loginList = applicationForHolidaysList.stream()
+                .map(ApplicationForHolidays::getUserWhoRequestAboutHolidays)
+                .map(User::getLogin)
+                .collect(Collectors.toList());
+
 
         System.out.println("***  Zadanie 2  ***");
 
@@ -133,6 +127,7 @@ Pytanie: Jaki jest Twój ulubiony kolor?
                 System.out.println(login + " - UWAGA! - posiada polskie znaki");
             }
         }
+
 
         System.out.println("******************* \n");
 
@@ -184,5 +179,26 @@ Pytanie: Jaki jest Twój ulubiony kolor?
         System.out.println("Zawartość w pliku exercixe_4.txt");
         System.out.println("******************* \n");
 
+    }
+
+    private void exercise5(List<ApplicationForHolidays> applicationForHolidaysList) throws InstantiationException, IllegalAccessException, NoSuchFieldException {
+
+        /*
+        Na potrzeby tego zadania, dodałem do klasy User metodę getSalary()
+         */
+
+        System.out.println("***  Zadanie 4  ***");
+        Class<?> clazz = Child.class;
+        Object cc = clazz.newInstance();
+
+        System.out.println("Before: " + ((Child) cc).getSalary());
+
+
+        Field f1 = cc.getClass().getSuperclass().getDeclaredField("salary");
+        f1.setAccessible(true);
+        f1.set(cc, 10_000.00);
+        Double str1 = (Double) f1.get(cc);
+
+        System.out.println("After: " + ((Child) cc).getSalary());
     }
 }

@@ -25,6 +25,8 @@ public class User {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	
-	
+
+	public double getSalary() {
+		return salary;
+	}
 }
